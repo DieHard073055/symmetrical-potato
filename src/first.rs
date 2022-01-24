@@ -46,6 +46,16 @@ struct Node {
     next: Link,
 }
 
+impl Drop for List {
+    fn drop(&mut self) {
+        let mut cur_link = mem::replace(&mut self.head, Link::Empty);
+
+        while let Link::More(mut boxed_node) = cur_link {
+            cur_link = mem::replace(&mut boxed_node.next, Link::Empty);
+        }
+    }
+}
+
 #[cfg(test)]
 mod test_first_list {
     use super::*;
@@ -64,8 +74,5 @@ mod test_first_list {
 
         // test empty list pop none
         assert_eq!(list.pop(), None);
-
-
-
     }
 }
